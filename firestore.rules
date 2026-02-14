@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if user is admin (email or role)
+    function isAdmin() {
+      return request.auth != null && 
+        (
+          request.auth.token.email == 'admin@ward.hamro' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        );
+    }
+
+    // Allow Admins to access everything
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // Public/User rules
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+    }
+
+    match /videos/{videoId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      // Admin update/delete handled by global admin rule above
+    }
+
+    match /issues/{issueId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+    
+    match /sponsors/{sponsorId} {
+      allow read: if true;
+      // Admin write handled by global admin rule
+    }
+    
+    match /notifications/{notificationId} {
+      allow read: if true;
+      // Admin write handled by global admin rule
+    }
+    
+    match /documents/{docId} {
+      allow read: if true;
+      // Admin write handled by global admin rule
+    }
+  }
+}
