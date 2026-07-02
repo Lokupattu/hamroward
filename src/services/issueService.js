@@ -1,11 +1,15 @@
-import { saveIssue, updateIssueStatus as updateIssueStatusInDB } from "./dbService";
+import {
+  saveIssue,
+  updateIssueStatus as updateIssueStatusInDB,
+} from "./dbService";
 import { uploadFileWithProgress } from "./storageService";
 
 export async function createIssue(payload) {
   const { evidenceFile, onEvidenceProgress, ...rest } = payload;
-  
+
   let evidenceURL = null;
   let evidencePublicId = null;
+  let evidenceType = null;
 
   if (evidenceFile) {
     try {
@@ -17,6 +21,7 @@ export async function createIssue(payload) {
       if (uploadResult && uploadResult.downloadURL) {
         evidenceURL = uploadResult.downloadURL;
         evidencePublicId = uploadResult.publicId;
+        evidenceType = uploadResult.resourceType;
       }
     } catch (error) {
       console.error("Error uploading evidence:", error);
@@ -30,6 +35,7 @@ export async function createIssue(payload) {
     ...rest,
     evidenceUrl: evidenceURL,
     evidencePublicId,
+    evidenceType,
     status: "pending",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -55,14 +61,6 @@ export async function updateIssueStatus(issueId, status) {
 
 export async function toggleIssuePublicStatus(issueId, isPublic) {
   try {
-    // We reuse saveIssue/update logic. 
-    // Assuming updateIssueStatusInDB or a generic update function exists in dbService.
-    // If not, we might need to use a generic update. 
-    // Let's check dbService.js first. 
-    // Actually, let's just use updateIssueStatusInDB but we need to check if it supports other fields.
-    // Wait, let me check dbService.js content again via tool if needed, but I recall it might be specific.
-    // Let's assume we need to add a generic update function or modify updateIssueStatusInDB.
-    // For now, I will use a new function name that I will implement in dbService as well.
     const { updateIssue } = await import("./dbService");
     await updateIssue(issueId, { isPublic });
   } catch (error) {
@@ -71,3 +69,12 @@ export async function toggleIssuePublicStatus(issueId, isPublic) {
   }
 }
 
+export async function deleteIssue(issueId) {
+  try {
+    const { deleteIssue } = await import("./dbService");
+    await deleteIssue(issueId);
+  } catch (error) {
+    console.error("Error deleting issue:", error);
+    throw error;
+  }
+}

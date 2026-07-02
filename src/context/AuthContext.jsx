@@ -7,6 +7,8 @@ import {
   signInWithEmailAndPassword,
   signOut,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { auth, db, isFirebaseEnabled } from "../lib/firebase";
@@ -126,6 +128,13 @@ export function AuthProvider({ children }) {
           throw new Error("Firebase Auth is not configured yet.");
         }
         return signInWithEmailAndPassword(auth, email, password);
+      },
+      async loginWithGoogle() {
+        if (!auth) {
+          throw new Error("Firebase Auth is not configured yet.");
+        }
+        const provider = new GoogleAuthProvider();
+        return signInWithPopup(auth, provider);
       },
       async logout() {
         if (!auth) return;

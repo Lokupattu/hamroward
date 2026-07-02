@@ -2,51 +2,46 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Check if user is admin (email or role)
-    function isAdmin() {
-      return request.auth != null && 
-        (
-          request.auth.token.email == 'admin@ward.hamro' ||
-          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
-        );
+    // 1. PUBLIC DONATIONS - ABSOLUTE PRIORITY
+    // This MUST stay at the very top level and match both GET and LIST
+    match /donations/{id} {
+      allow read, write: if true;
     }
 
-    // Allow Admins to access everything
+    // 2. ADMIN SECURITY
+    function isAdmin() {
+      return request.auth != null && (
+        request.auth.token.email == 'admin@ward.hamro' ||
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // Admin match (lower priority than specific collection matches)
     match /{document=**} {
       allow read, write: if isAdmin();
     }
 
-    // Public/User rules
-    match /users/{userId} {
-      allow create: if request.auth != null;
-      allow read, update: if request.auth != null && request.auth.uid == userId;
-    }
-
-    match /videos/{videoId} {
+    // 3. OTHER PUBLIC COLLECTIONS
+    match /sponsors/{id} { allow read: if true; }
+    match /notifications/{id} { allow read: if true; }
+    match /documents/{id} { allow read: if true; }
+    match /videos/{id} {
       allow read: if true;
       allow create: if request.auth != null;
-      // Admin update/delete handled by global admin rule above
     }
-
-    match /issues/{issueId} {
+    match /issues/{id} {
       allow read: if true;
       allow create: if request.auth != null;
       allow update: if request.auth != null && request.resource.data.userId == request.auth.uid;
     }
-    
-    match /sponsors/{sponsorId} {
-      allow read: if true;
-      // Admin write handled by global admin rule
+    match /users/{userId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
     }
-    
-    match /notifications/{notificationId} {
+    match /comments/{id} {
       allow read: if true;
-      // Admin write handled by global admin rule
-    }
-    
-    match /documents/{docId} {
-      allow read: if true;
-      // Admin write handled by global admin rule
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
     }
   }
 }

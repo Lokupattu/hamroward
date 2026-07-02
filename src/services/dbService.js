@@ -218,3 +218,13 @@ export const updateIssue = async (issueId, data) => {
     throw error;
   }
 };
+export const deleteIssue = async (issueId) => {
+  try {
+    const docRef = doc(db, COLLECTION_ISSUES, issueId);
+    await deleteDoc(docRef);
+    return true;
+  } catch (error) {
+    console.error("Error deleting issue:", error);
+    throw error;
+  }
+};

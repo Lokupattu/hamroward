@@ -8,6 +8,7 @@ const adminLinks = [
   { to: "/admin/users", label: "Users" },
   { to: "/admin/documents", label: "Documents" },
   { to: "/admin/sponsors", label: "Sponsors" },
+  { to: "/profile", label: "My Profile" },
 ];
 
 import Logo from "../common/Logo";

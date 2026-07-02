@@ -26,9 +26,50 @@ export default function ReportIssuePage() {
     setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  const handleFileChange = (event) => {
-    const file = event.target.files?.[0] ?? null;
-    setForm((prev) => ({ ...prev, evidence: file }));
+  const VIDEO_LIMIT_SEC = 15;
+
+  const handleFileChange = async (event) => {
+    let file = event.target.files?.[0] ?? null;
+    if (!file) return;
+
+    // File size limit (20MB)
+    const MAX_SIZE = 20 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setMessage("File is too large. Please select a file smaller than 20MB.");
+      event.target.value = "";
+      setForm((prev) => ({ ...prev, evidence: null }));
+      return;
+    }
+
+    if (file.type.startsWith('image/')) {
+      try {
+        const { compressImage } = await import("../../utils/imageCompression");
+        file = await compressImage(file);
+        setMessage(null);
+        setForm((prev) => ({ ...prev, evidence: file }));
+      } catch (err) {
+        console.error("Compression error:", err);
+        setForm((prev) => ({ ...prev, evidence: file }));
+      }
+    } else if (file.type.startsWith('video/')) {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        if (video.duration > VIDEO_LIMIT_SEC) {
+          setMessage(`Video duration must be ${VIDEO_LIMIT_SEC} seconds or less.`);
+          setForm((prev) => ({ ...prev, evidence: null }));
+          event.target.value = ""; 
+        } else {
+          setMessage(null);
+          setForm((prev) => ({ ...prev, evidence: file }));
+        }
+      };
+      video.src = URL.createObjectURL(file);
+    } else {
+      setMessage(null);
+      setForm((prev) => ({ ...prev, evidence: file }));
+    }
   };
 
   const handleSubmit = async (event) => {
