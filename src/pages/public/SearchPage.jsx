@@ -72,9 +72,11 @@ export default function SearchPage() {
                      <div className="relative pt-[56.25%] bg-black">
                         {video.videoUrl ? (
                           <video
-                            src={video.videoUrl}
+                            src={`${video.videoUrl}#t=0.1`}
                             className="absolute inset-0 w-full h-full object-cover"
                             controls
+                            playsInline
+                            preload="metadata"
                           />
                         ) : (
                           <div className="absolute inset-0 flex items-center justify-center bg-slate-200">

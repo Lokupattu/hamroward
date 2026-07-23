@@ -126,8 +126,10 @@ export default function AdminVideosPage() {
               <div className="mt-4 aspect-video w-full overflow-hidden rounded-lg bg-black">
                 {video.videoUrl ? (
                   <video
-                    src={video.videoUrl}
+                    src={`${video.videoUrl}#t=0.1`}
                     controls
+                    playsInline
+                    preload="metadata"
                     className="w-full h-full object-cover"
                     onError={async () => {
                       console.warn("Video failed, fetching fresh URL…");

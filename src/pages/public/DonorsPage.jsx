@@ -1,14 +1,23 @@
 import { useState, useEffect } from "react";
 import SectionHeader from "../../components/common/SectionHeader";
 import { subscribeToDonations } from "../../services/donationService";
+import { useAuth } from "../../context/AuthContext";
 
 export default function DonorsPage() {
+  const { role, loading: authLoading } = useAuth();
   const [donations, setDonations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Initial data load/subscription
+    if (authLoading) return;
+    
+    // Only subscribe to donations if the user has an admin role
+    if (role !== "admin") {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = subscribeToDonations((data, err) => {
       // CRITICAL FIX: Always set the data (it contains mocks/failover)
       if (data) setDonations(data);
@@ -19,7 +28,7 @@ export default function DonorsPage() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [role, authLoading]);
 
   const formatDate = (donation) => {
     if (donation.createdAt?.toDate) return donation.createdAt.toDate().toLocaleDateString();

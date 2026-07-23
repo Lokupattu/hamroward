@@ -132,9 +132,11 @@ function IssueCard({ issue, isVideo, onOpen }) {
         <div className="aspect-video w-full bg-slate-100 relative group overflow-hidden cursor-pointer" onClick={onOpen}>
           {isVideo ? (
             <video 
-              src={issue.evidenceUrl} 
+              src={`${issue.evidenceUrl}#t=0.1`} 
               className="h-full w-full object-cover" 
               preload="metadata"
+              playsInline
+              muted
             />
           ) : (
             <img 

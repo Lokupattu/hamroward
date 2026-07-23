@@ -106,6 +106,7 @@ export default function IssueDetailsModal({ issue, onClose }) {
                 <video 
                   src={issue.evidenceUrl} 
                   controls 
+                  playsInline
                   className="w-full max-h-[40vh] md:max-h-[50vh] object-contain" 
                   preload="metadata"
                 />

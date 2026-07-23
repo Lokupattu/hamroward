@@ -67,9 +67,11 @@ export default function MyVideosPage() {
               <div className="relative aspect-video bg-black">
                 {video.videoUrl ? (
                   <video 
-                    src={video.videoUrl} 
+                    src={`${video.videoUrl}#t=0.1`} 
                     className="w-full h-full object-cover"
                     controls
+                    playsInline
+                    preload="metadata"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-slate-500">

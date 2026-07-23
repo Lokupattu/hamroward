@@ -133,9 +133,11 @@ const VideoListPage = () => {
                 {video.videoUrl ? (
                   <>
                     <video
-                      src={video.videoUrl}
+                      src={`${video.videoUrl}#t=0.1`}
                       className="absolute inset-0 w-full h-full object-cover"
                       controls
+                      playsInline
+                      preload="metadata"
                     />
                     <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center">
                       <FiClock className="mr-1" />

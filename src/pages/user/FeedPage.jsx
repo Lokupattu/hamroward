@@ -55,8 +55,9 @@ export default function FeedPage() {
             {video.videoURL && video.videoURL.startsWith("http") ? (
               <div className="mt-4 aspect-video w-full overflow-hidden rounded-xl bg-slate-100">
                 <video
-                  src={video.videoURL}
+                  src={`${video.videoURL}#t=0.1`}
                   controls
+                  playsInline
                   className="h-full w-full object-cover"
                   preload="metadata"
                 >
@@ -68,6 +69,7 @@ export default function FeedPage() {
                 <video
                   src={video.videoURL}
                   controls
+                  playsInline
                   className="h-full w-full object-cover"
                   preload="metadata"
                 >

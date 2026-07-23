@@ -43,7 +43,7 @@ export default function AdminLayout() {
           </nav>
         </aside>
 
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col min-w-0">
           <header className="border-b border-slate-800 bg-slate-900/60 px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -52,35 +52,35 @@ export default function AdminLayout() {
                   <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Officer Panel</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 text-sm">
+              <div className="flex items-center gap-1.5 sm:gap-3 text-xs sm:text-sm">
                 <button 
                   onClick={() => navigate('/')}
-                  className="rounded-full border border-slate-700 px-3 py-1 text-slate-300 transition hover:bg-slate-800 hover:text-white"
+                  className="rounded-full border border-slate-700 px-2.5 py-1 text-slate-300 transition hover:bg-slate-800 hover:text-white whitespace-nowrap"
                 >
-                  Back to Home
+                  <span className="hidden sm:inline">Back to </span>Home
                 </button>
                 <NavLink 
                   to="/wards"
-                  className="rounded-full border border-slate-700 px-3 py-1 text-slate-300 hover:text-white transition"
+                  className="rounded-full border border-slate-700 px-2.5 py-1 text-slate-300 hover:text-white transition whitespace-nowrap"
                 >
                   Ward {profile?.wardNumber || "..."}
                 </NavLink>
                 <NavLink 
                   to="/notifications"
-                  className="rounded-full border border-slate-700 px-3 py-1 text-slate-300 transition hover:border-blue-400 hover:text-blue-300"
+                  className="rounded-full border border-slate-700 px-2.5 py-1 text-slate-300 transition hover:border-blue-400 hover:text-blue-300 whitespace-nowrap"
                 >
-                  Notifications
+                  <span className="hidden sm:inline">Notifications</span><span className="sm:hidden">Alerts</span>
                 </NavLink>
               </div>
             </div>
-            <div className="mt-4 flex gap-3 text-xs font-medium text-slate-400 lg:hidden">
+            <div className="mt-4 flex gap-2 text-xs font-medium text-slate-400 lg:hidden overflow-x-auto pb-2 scrollbar-none whitespace-nowrap">
               {adminLinks.map((link) => (
                 <NavLink
                   key={link.to}
                   to={link.to}
                   className={({ isActive }) =>
                     [
-                      "rounded-full px-3 py-1",
+                      "rounded-full px-3 py-1 flex-shrink-0",
                       isActive ? "bg-blue-500/20 text-white" : "bg-slate-800/60",
                     ].join(" ")
                   }
